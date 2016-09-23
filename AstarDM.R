@@ -280,5 +280,59 @@ average_turns = function(){
 }
 
 
+dynamicProgram = function() {
+  packages = matrix(sample(1:10,replace=T,5*5),ncol=5)
+  distances = array(0, dim=c(ncol(packages),ncol(packages)))
+  paths = array(0, dim=c(ncol(packages)-1,ncol(packages)))
+  print(packages)
+  print(distances)
+  print(paths)
+  for (i in 1:ncol(packages)) {
+    distances[1,i] = manhattan(c(packages[i,1],packages[i,2]),c(0,0))
+  }
+  for (i in 2:ncol(packages)) { # i means current row, j means current column
+    for (j in 1:ncol(packages)) {
+      if (j == i) {
+        next
+      }
+      if (j == 1) {
+        tempDis = manhattan(c(packages[2,3],packages[2,4]),c(packages[j,1],packages[j,2])) + distances[i-1,2]
+        tempPath = 2
+        for (k in 3:ncol(packages)) {
+          print(which(paths[,j]==k))
+          if (length(which(paths[,j]==k))!=0) {
+            next
+            print("重复")
+          }
+          temp = manhattan(c(packages[k,3],packages[k,4]),c(packages[j,1],packages[j,2])) + distances[i-1,k]
+          if (temp < tempDis) {
+            tempDis = temp
+            tempPath = k
+          }
+        }
+        distances[i,j] = tempDis
+        paths[i-1,j] = tempPath
+      } else {
+        tempDis = manhattan(c(packages[1,3],packages[1,4]),c(packages[j,1],packages[j,2])) + distances[i-1,1]
+        tempPath = 1
+        for (k in 2:ncol(packages)) {
+          if (length(which(paths[,j]==k))!=0) {
+            next
+            print("重复")
+          }
+          temp = manhattan(c(packages[k,3],packages[k,4]),c(packages[j,1],packages[j,2])) + distances[i-1,k]
+          if (temp<tempDis) {
+            tempDis = temp
+            tempPath = k
+          }
+        }
+        distances[i,j] = tempDis
+        paths[i-1,j] = tempPath
+      }
+    }
+  }
+  print(distances)
+  print(paths)
+}
 
 
